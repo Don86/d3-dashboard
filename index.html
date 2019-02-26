@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<meta charset="utf-8">
+
+<!-- 
+  https://www.d3-graph-gallery.com/graph/line_basic.html
+  http://bl.ocks.org/jfreels/7015635
+  https://medium.freecodecamp.org/learn-to-create-a-line-chart-using-d3-js-4f43f1ee716b
+-->
+<head>
+  <link rel="stylesheet" type="text/css" href="./styles.css" />
+  <script src="https://d3js.org/d3.v4.min.js"></script>
+  <script type="text/javascript" src="script.js" charset="utf-8"></script>
+</head>
+
+
+<body>
+  <header class="topbar">Top Bar</header>
+  <select id = "dropdown">
+    <option selected="selected" value="VTSAX">VTSAX</option>
+    <option value="SPY">SPY</option>
+    <option value="GOOG">GOOG</option>
+  </select>
+  <br />
+  <h1 id="ticker-text"></h1>
+  <div id="visualization"></div>
+
+  <script>
+    const api_key = "EEKL6B77HNZE6EB4"
+
+    var margin = {top: 20, right: 20, bottom: 30, left: 50},
+        width = 960 - margin.left - margin.right,
+        height = 500 - margin.top - margin.bottom;
+
+    var svg = d3.select("body")
+          .append("svg")
+          .attr("width", width + margin.left + margin.right)
+          .attr("height", height + margin.top + margin.bottom)
+          .append("g")
+          .attr("transform",
+                "translate(" + margin.left + "," + margin.top + ")");
+
+    // ============================== Init graph with VTSAX values ==============================
+    // append the svg obgect to the body of the page
+    // appends a 'group' element to 'svg'
+    // moves the 'group' element to the top left margin
+    d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol=VTSAX&apikey="+api_key, function(error, apiData) {
+      if (error) throw error;
+      
+      let data = parseData(apiData["Monthly Time Series"])
+      if (data.length == 0) {
+            alert("Error retrieving data for VTSAX")
+          } else {
+            console.log("init data:", data)
+          }
+
+      var x = d3.scaleTime()
+        .domain(d3.extent(data, function(d) { return d.date; }))
+        .range([ 0, width ]);
+      svg.append("g")
+        .attr("class", "xAxis")
+        .attr("transform", "translate(0," + height + ")")
+        .call(d3.axisBottom(x));
+
+      // Add Y axis
+      var y = d3.scaleLinear()
+        .domain([0, d3.max(data, function(d) { return d.close; })])
+        .range([ height, 0 ]);
+      svg.append("g")
+        .attr("class", "yAxis")
+        .call(d3.axisLeft(y));
+
+      var line = d3.line()
+          .x(function(d) { return x(d.date) })
+          .y(function(d) { return y(d.close) })
+
+      // Add the line
+      svg.append("path")
+        .datum(data)
+        .attr("fill", "none")
+        .attr("class", "line")
+        .attr("stroke", "steelblue")
+        .attr("stroke-width", 1.5)
+        .attr("d", line)
+      })
+
+    // ============================== Dropdown select logic ==============================
+    d3.select('#dropdown')
+			.on("change", function () {
+        const sect = document.getElementById("dropdown");
+				const selectedValue = document.getElementById("dropdown").options[sect.selectedIndex].value;
+				console.log(selectedValue)
+        const ticker = selectedValue
+
+        d3.json("https://www.alphavantage.co/query?function=TIME_SERIES_MONTHLY&symbol="+ticker+"&apikey="+api_key, function(error, apiData) {
+          if (error) throw error;
+
+          let data = parseData(apiData["Monthly Time Series"])
+          if (data.length == 0) {
+            alert("Error retrieving data for "+ticker)
+          } else {
+            console.log(data)
+          }
+          // D3 starts from here on
+
+          // Scale the range of the data
+
+          var x = d3.scaleTime()
+            .domain(d3.extent(data, function(d) { return d.date; }))
+            .range([ 0, width ]);
+          var y = d3.scaleLinear()
+            .domain([0, d3.max(data, function(d) { return d.close; })])
+            .range([ height, 0 ]);
+
+          d3.select('.xAxis').call(d3.axisBottom(x))
+          d3.select('.yAxis').call(d3.axisLeft(y))
+          d3.select('.line').datum(data).attr('d',d3.line()
+            .x(function(d) { return x(d.date) })
+            .y(function(d) { return y(d.close) })
+          )
+        })
+      })
+  </script>
+</body>

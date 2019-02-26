@@ -1,0 +1,18 @@
+@import url(https://fonts.googleapis.com/css?family=Bree+Serif);
+
+.topbar {
+    position: sticky;
+    z-index:1000;
+    top: 0;
+    font-family: 'Bree Serif', cursive;
+    height: 80px;
+    background-color: #4B78B8;
+    color: whitesmoke;
+    margin-bottom: 2px;
+    padding-left: 20px;
+    text-align: center;
+    font-size: 25px;
+    display: flex;
+    justify-content: left;
+    align-items: center;
+  }
