@@ -89,6 +89,7 @@
           .attr("height", function(d){ return height - yChart(d.val); })
           .attr("width", barWidth - 1)
           .attr("fill", "#4B78B8")
+          .on("mouseover", console.log("mouseover"))
           
         //left axis
         chart.select('.y')
