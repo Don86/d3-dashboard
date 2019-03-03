@@ -36,3 +36,11 @@ html *
 .form-panel {
     width: 12em;
 }
+
+.bar {
+  fill: #4B78B8;
+}
+
+.bar:hover {
+  fill: orange ;
+}

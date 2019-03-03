@@ -4,3 +4,8 @@ Just in D3.js, because ReactJS turned out to be hilariously unsuitable for such 
 
 * data fetched from the Alpha Vantage API
 * Viz. with D3.JS
+
+
+## Problems
+
+* [BUG] Axes for bar chart changing after line chart is changed.  
